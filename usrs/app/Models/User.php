@@ -42,4 +42,37 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public static function CreateUsername($email)
+    {
+        //Slace username from mail address
+        $mail_username = strstr($email, '@', $email);
+
+        //Create unique username and check already username
+
+        $count_usr = 0;
+        $check_username = true;
+
+
+        if (User::where('username', '=', $mail_username)->exists()) {
+            do {
+                $count_usr = $count_usr + 1;
+                $username = $mail_username . '_' . $count_usr; //generate new username
+                if (User::where('username', '=', $username)->exists()) //check username
+                {
+                    //username exist
+                    $check_username = true;
+                } else {
+                    //username not exist
+                    $check_username = false;
+                }
+            } while ($check_username != false);
+        } else {
+
+
+            $username = $mail_username;
+        }
+
+        return $username;
+    }
 }

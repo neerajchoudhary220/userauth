@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -36,6 +37,14 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
+    protected function context()
+    {
+        // return array_merge(parent::context(), [
+        //     'message1' => 'bar',
+        // ]);
+
+        return ['id' => $this->id];
+    }
     /**
      * Register the exception handling callbacks for the application.
      *

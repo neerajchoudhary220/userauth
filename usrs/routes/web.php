@@ -18,14 +18,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('login',[UserController::class,'userLogin']);
-Route::get('logout',[UserController::class,'userLogout']);
-Route::get('home',[UserController::class,'home']);
-Route::get("invalid",function()
-{
+Route::post('login', [UserController::class, 'userLogin']);
+Route::get('logout', [UserController::class, 'userLogout']);
+Route::get('home', [UserController::class, 'home']);
+Route::get("invalid", function () {
     return view("invalid");
 });
-
-Route::resource('user', UserController::class);
-
-

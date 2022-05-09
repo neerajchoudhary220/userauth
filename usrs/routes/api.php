@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,16 +18,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 //public
-Route::post('/register',[AuthController::class,'register']);
-Route::post('/login',[AuthController::class,'login']);
-Route::post('/upload',[AuthController::class,'upload']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/upload', [AuthController::class, 'upload']);
+
 
 //prtected
-Route::group(['middleware'=>['auth:sanctum']],function(){
+Route::group(['middleware' => ['auth:sanctum']], function () {
 
-Route::post('/logout',[AuthController::class,'logout']);
-Route::post('/update',[AuthController::class,'update']);
-Route::post('/update_username',[AuthController::class,'updateUsername']);
-
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/update', [ProfileController::class, 'update']);
+    Route::post('/update_username', [ProfileController::class, 'updateUsername']);
 });
-
