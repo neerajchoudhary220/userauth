@@ -10,54 +10,55 @@ use App\Models\Image;
 
 class AuthController extends Controller
 {
-    //register
+ //Register Api
 public function register(Request $request){
  $fields = $request->validate([
      'name'=>'required |string',
-     'email'=>'required|string|unique:users,email',
+    //  'email'=>'required|string|unique:users,email',
+    'email'=> 'required|string|unique:users,email|regex:/(.+)@(.+)\.(.+)/i',
      'password'=>'required|string|confirmed',
      'username'=>'unique:users,username'
  ]);
 
+ //Slace username from mail address
  $mail_username = strstr($request->email,'@',$request->email);
 
-            $check_username=true;
-            $count_usr=0;
+ //Create unique username and check already username
+
+            $count_usr=0;  $check_username=true;
             while($check_username!=false)
             {
                 $count_usr = $count_usr+1;
-
-                $username= $mail_username.'_'.$count_usr;
-                if(User::where('username','=',$username)->exists())
+                $username= $mail_username.'_'.$count_usr;//generate new username
+                if(User::where('username','=',$username)->exists())//check username
                 {
                         //username exist
                     $check_username =true;
-                }
-                else{
+                }else{
                         //username not exist
                         $check_username=false;
                 }
             }
 
 
+            //Save data in users table
+            $user = User::create([
+                //  'username'=>strstr($request->email,'@',$request->email).rand(0,99999),
+                'username'=>$username,
+                'name'=>$fields['name'],
+                'email'=>$fields['email'],
+                'password'=>bcrypt($fields['password'])
+            ]);
 
- $user = User::create([
-    //  'username'=>strstr($request->email,'@',$request->email).rand(0,99999),
-    'username'=>$username,
-     'name'=>$fields['name'],
-     'email'=>$fields['email'],
-     'password'=>bcrypt($fields['password'])
- ]);
+                $token = $user->createToken('myapptoken')->plainTextToken;
+                $response =[
+                    "data"=>[
+                        'user'=>$user,
+                        'token'=>$token,
+                        'message'=>'Register Successfully !'
+                    ]
 
- $token = $user->createToken('myapptoken')->plainTextToken;
- $response =[
-     "data"=>[
-        'user'=>$user,
-        'token'=>$token,
-        'message'=>'Register Successfully !'
-     ]
-
- ];
+                ];
 
  return response($response, 201);
     }
@@ -139,32 +140,45 @@ return response([
 
        public function updateUsername(Request $request)
        {
+           $fields = $request->validate([
+            'username'=>'unique:users,username'
+           ]);
           $user = $request->user();
-            if(User::where('username','=',$request->username)->exists())
-            {
-                $response =[
-                    "data"=>[
-                       'user'=>$user,
-                       'token'=>'',
-                       'message'=>'This username already exist !'
-                    ]
-                    ];
-                return response($response,401);
+           $user->update([
+               'username'=>$fields['username']
+           ]);
+            // if(User::where('username','=',$request->username)->exists())
+            // {
+            //     $response =[
+            //         "data"=>[
+            //            'user'=>$user,
+            //            'token'=>'',
+            //            'message'=>'This username already exist !'
+            //         ]
+            //         ];
+            //     return response($response,401);
 
-            }
-            else{
-                $user->update([
-                    'username'=>$request->username
-                ]);
+            // }
+            // else{
+            //     $user->update([
+            //         'username'=>$request->username
+            //     ]);
 
-                $response =[
-                    "data"=>[
-                       'user'=>$user,
-                       'token'=>'',
-                       'message'=>'Username updated successfully !'
-                    ]
-                    ];
-            }
+            //     $response =[
+            //         "data"=>[
+            //            'user'=>$user,
+            //            'token'=>'',
+            //            'message'=>'Username updated successfully !'
+            //         ]
+            //         ];
+            // }
+            $response =[
+                        "data"=>[
+                           'user'=>$user,
+                           'token'=>'',
+                           'message'=>'Username updated successfully !'
+                        ]
+                        ];
             return response($response, 201);
        }
 

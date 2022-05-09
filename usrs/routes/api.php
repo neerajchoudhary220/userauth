@@ -28,6 +28,3 @@ Route::post('/update_username',[AuthController::class,'updateUsername']);
 
 });
 
-// Route::get('/test',function(){
-//     return "Testing";
-// });
