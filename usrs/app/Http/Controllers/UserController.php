@@ -27,14 +27,14 @@ class UserController extends Controller
 
             return redirect('home');
         }else{
-            return "invalid";
+            return redirect("invalid");
         }
 
     }
 
     public function home(Request $request){
             if(Auth::check()){
-                return view('welcome');
+                return view('userpage');
             }
             else{
                 return view('home');
@@ -95,5 +95,16 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+
+    //________________________ajax user login_______________________________________
+
+    public function login(Request $request)
+    {
+        return view('user.login',compact('request'));
+
+        // return $request;
     }
 }
