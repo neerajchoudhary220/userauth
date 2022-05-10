@@ -2,8 +2,12 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Validation\ValidationException;
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Auth\AuthenticationException;
+
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -46,8 +50,52 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
+        });
 
-            //
+        //validation exception
+        $this->renderable(function (ValidationException  $e, $request) {
+            // return response()->view('errors.invalid-order', [], 500);
+            // dd($e);
+            $response = [
+                "data" => [
+                    'message' => $e->getMessage(),
+                    'errors' => $e->errors(),
+                    'user' => '',
+                    'token' => '',
+
+                ]
+
+            ];
+
+            return response()->json($response, 500);
+        });
+
+        //Not found exception
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            $response = [
+                "data" => [
+                    'message' => 'Page Not Found',
+                    'errors' => '',
+                    'user' => '',
+                    'token' => '',
+
+                ]
+
+            ];
+            return response()->json($response, 404);
+        });
+
+        //AuthenticatinException
+        $this->renderable(function (AuthenticationException $e, $request) {
+            $response = [
+                "data" => [
+                    'message' => $e->getMessage(),
+                    'errors' => '',
+                    'user' => '',
+                    'token' => '',
+                ]
+            ];
+            return response()->json($response, 500);
         });
     }
 }

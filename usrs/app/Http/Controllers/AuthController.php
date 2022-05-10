@@ -14,7 +14,9 @@ class AuthController extends Controller
     //Register Api
     public function register(Request $request)
     {
-        $validator = Validator::make(request()->all(), [
+
+
+        $request->validate([
             'name' => 'required |string',
             //  'email'=>'required|string|unique:users,email',
             'email' => 'required|string|unique:users,email|regex:/(.+)@(.+)\.(.+)/i',
@@ -22,23 +24,21 @@ class AuthController extends Controller
             'username' => 'unique:users,username'
         ]);
 
-        // $fields =  $request->validate([
+        // $validator = Validator::make(request()->all(), [
         //     'name' => 'required |string',
         //     //  'email'=>'required|string|unique:users,email',
         //     'email' => 'required|string|unique:users,email|regex:/(.+)@(.+)\.(.+)/i',
         //     'password' => 'required|string|confirmed',
         //     'username' => 'unique:users,username'
         // ]);
-
-
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => $validator->errors()->first('name'),
-                'errors' => $validator->errors(),
-                'additional_msg' => 'Bad Request',
-                'status' => Response::HTTP_BAD_REQUEST,
-            ], Response::HTTP_BAD_REQUEST);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'message' => $validator->errors()->first('name'),
+        //         'errors' => $validator->errors(),
+        //         'additional_msg' => 'Bad Request',
+        //         'status' => Response::HTTP_BAD_REQUEST,
+        //     ], Response::HTTP_BAD_REQUEST);
+        // }
 
 
         $user_name = User::CreateUsername($request->email);
