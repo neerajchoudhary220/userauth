@@ -14,36 +14,40 @@ class AuthController extends Controller
     //Register Api
     public function register(Request $request)
     {
-        // protected $stopOnFirstFailure = true;
-        $fields =   Validator::make($request->all(), [
-            'name' => 'bail|required |string',
+        $validator = Validator::make(request()->all(), [
+            'name' => 'required |string',
             //  'email'=>'required|string|unique:users,email',
             'email' => 'required|string|unique:users,email|regex:/(.+)@(.+)\.(.+)/i',
             'password' => 'required|string|confirmed',
             'username' => 'unique:users,username'
         ]);
 
-        // if ($fields->stopOnFirstFailure()->fails()) {
-        //     // ...
-        // }
-
-        $fields->after(function ($fields) {
-            if ($fields->somethingElseIsInvalid()) {
-                $fields->errors()->add(
-                    'field',
-                    'Something is wrong with this field!'
-                );
-            }
-        });
+        // $fields =  $request->validate([
+        //     'name' => 'required |string',
+        //     //  'email'=>'required|string|unique:users,email',
+        //     'email' => 'required|string|unique:users,email|regex:/(.+)@(.+)\.(.+)/i',
+        //     'password' => 'required|string|confirmed',
+        //     'username' => 'unique:users,username'
+        // ]);
 
 
-        $user_name = User::CreateUsername($fields['email']);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first('name'),
+                'errors' => $validator->errors(),
+                'additional_msg' => 'Bad Request',
+                'status' => Response::HTTP_BAD_REQUEST,
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+
+        $user_name = User::CreateUsername($request->email);
         $user = User::create([
             //  'username'=>strstr($request->email,'@',$request->email).rand(0,99999),
             'username' => $user_name,
-            'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password)
         ]);
 
         $token = $user->createToken('myapptoken')->plainTextToken;
