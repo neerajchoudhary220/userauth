@@ -51,17 +51,8 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('myapptoken')->plainTextToken;
-        $response = [
-            "data" => [
-                'user' => $user,
-                'token' => $token,
-                'message' => 'Register Successfully !'
-            ]
 
-        ];
-        return response($response, 201);
-
-        // return User::CreateUsername($fields['email'], $fields['name'], $fields['password']);
+        return responsedata(msg: 'Register Successfully !', data: ['user' => $user, "token" => $token], status: 200);
     }
 
 
@@ -69,15 +60,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         auth()->user()->tokens()->delete();
-        $response = [
-            "data" => [
-                'user' => '',
-                'token' => '',
-                'message' => 'Logout Successfully !'
-            ]
-
-        ];
-        return response([$response, 201]);
+        return responsedata(msg: 'Logout Successfully !');
     }
 
     //login
@@ -94,21 +77,11 @@ class AuthController extends Controller
         //check password
         if (!$user || !Hash::check($fields['password'], $user->password)) {
 
-            return response([
-                'message' => 'Username or password invalid !'
-            ], 401);
+            return responsedata(msg: 'Invalid username or password', status: 400);
         }
 
         $token = $user->createToken('myapptoken')->plainTextToken;
-        $response = [
-            "data" => [
-                'user' => $user,
-                'token' => $token,
-                'message' => 'Logged in Successfully !'
-            ]
-        ];
-
-        return response($response, 201);
+        return responsedata(msg: 'Login in Successfully !', status: 200, data: ['user' => $user, 'token' => $token]);
     }
 
 

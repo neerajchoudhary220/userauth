@@ -2,16 +2,18 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Validation\ValidationException;
+
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Auth\AuthenticationException;
-
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+
+
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -49,53 +51,26 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
+
         $this->reportable(function (Throwable $e) {
         });
 
+
         //validation exception
         $this->renderable(function (ValidationException  $e, $request) {
-            // return response()->view('errors.invalid-order', [], 500);
-            // dd($e);
-            $response = [
-                "data" => [
-                    'message' => $e->getMessage(),
-                    'errors' => $e->errors(),
-                    'user' => '',
-                    'token' => '',
-
-                ]
-
-            ];
-
-            return response()->json($response, 500);
+            return responsedata(msg: $e->getMessage(), status: 500, data: ['user' => 'hello']);
         });
 
         //Not found exception
         $this->renderable(function (NotFoundHttpException $e, $request) {
-            $response = [
-                "data" => [
-                    'message' => 'Page Not Found',
-                    'errors' => '',
-                    'user' => '',
-                    'token' => '',
-
-                ]
-
-            ];
-            return response()->json($response, 404);
+            if ($request->is('api/*')) {
+                return responsedata();
+            }
         });
 
         //AuthenticatinException
         $this->renderable(function (AuthenticationException $e, $request) {
-            $response = [
-                "data" => [
-                    'message' => $e->getMessage(),
-                    'errors' => '',
-                    'user' => '',
-                    'token' => '',
-                ]
-            ];
-            return response()->json($response, 500);
+            return responsedata(status: 500, msg: $e->getMessage());
         });
     }
 }
