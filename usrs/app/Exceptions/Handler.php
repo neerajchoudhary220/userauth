@@ -58,13 +58,14 @@ class Handler extends ExceptionHandler
 
         //validation exception
         $this->renderable(function (ValidationException  $e, $request) {
-            return responsedata(msg: $e->getMessage(), status: 500, data: ['user' => 'hello']);
+            return responsedata(msg: $e->validator->errors()->first(), errors: $e->errors(), status: $e->status);
+            // dd($e);
         });
 
         //Not found exception
         $this->renderable(function (NotFoundHttpException $e, $request) {
             if ($request->is('api/*')) {
-                return responsedata();
+                return responsedata(msg: 'Page Not Found');
             }
         });
 

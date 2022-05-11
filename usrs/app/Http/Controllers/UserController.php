@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+
 class UserController extends Controller
 {
     /**
@@ -18,30 +19,32 @@ class UserController extends Controller
     public function userLogin(Request $request)
     {
         $request->validate([
-            'username'=>'required | string',
-            'password'=>'required |string'
+            'username' => 'required | string',
+            'password' => 'required |string'
         ]);
         $credentials = $request->only('username', 'password');
 
         if (Auth::attempt($credentials)) {
 
             return redirect('home');
-        }else{
+        } else {
             return redirect("invalid");
         }
-
     }
 
-    public function home(Request $request){
-            if(Auth::check()){
-                return view('userpage');
-            }
-            else{
-                return view('home');
-            }
+    public function home(Request $request)
+    {
+        if (Auth::check()) {
+            Auth::user()->assignRole('Admin');
+            return view('userpage');
+        } else {
+
+            return view('home');
+        }
     }
 
-    public function userLogout(){
+    public function userLogout()
+    {
         Auth::logout();
         // auth()->user()->tokens()->delete();
         return redirect('home');
@@ -103,7 +106,7 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        return view('user.login',compact('request'));
+        return view('user.login', compact('request'));
 
         // return $request;
     }

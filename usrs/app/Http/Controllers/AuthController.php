@@ -52,7 +52,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        return responsedata(msg: 'Register Successfully !', data: ['user' => $user, "token" => $token], status: 200);
+        return responsedata(msg: 'Register Successfully !', data: ['user' => $user, "token" => $token]);
     }
 
 
@@ -81,7 +81,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('myapptoken')->plainTextToken;
-        return responsedata(msg: 'Login in Successfully !', status: 200, data: ['user' => $user, 'token' => $token]);
+        return responsedata(msg: 'Login in Successfully !', data: ['user' => $user, 'token' => $token]);
     }
 
 
