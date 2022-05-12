@@ -7,6 +7,8 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
+use function GuzzleHttp\Promise\all;
+
 class RolesAndPermissionsSeeder extends Seeder
 {
     /**
@@ -16,7 +18,8 @@ class RolesAndPermissionsSeeder extends Seeder
      */
     public function run()
     {
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        // app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
 
         $permission = [
             'create', 'edit', 'view', 'delete'
@@ -24,19 +27,22 @@ class RolesAndPermissionsSeeder extends Seeder
 
         //Creating permission
         foreach ($permission as $p) {
-            Permission::create(['name' => $p]);
+            Permission::updateOrCreate(['name' => $p]);
         }
         //Creating roles and giving permission_______________________________________________
-        //all permission given to admin
-        $admin = Role::create(['name' => 'Admin']);
-        $admin->givePermissionTo(Permission::all());
 
-        //Manage have two permission edit and view
-        $manager = Role::create(['name' => 'Manager']);
-        $manager->givePermissionTo(['create', 'edit', 'view']);
+        //Admin
+        $admin = Role::updateOrCreate(['name' => 'Admin']); //creating admin role
+        $admin->givePermissionTo(Permission::all()); //giving all permission
 
-        //Normal user have only one permission only view
-        $normal_usr = Role::create(['name' => 'Normal User']);
-        $normal_usr->givePermissionTo(['view']);
+        //Manager
+        $manager = Role::updateOrCreate(['name' => 'Manager']); //creating manager role
+        $manager->givePermissionTo(['create', 'edit', 'view']); //giving permission
+
+        //Normal user
+        $normal_usr = Role::updateOrCreate(['name' => 'Normal User']); //creating normal user role
+        $normal_usr->givePermissionTo(['view']); //giving view permmission only
+
+
     }
 }

@@ -35,7 +35,7 @@ class UserController extends Controller
     public function home(Request $request)
     {
         if (Auth::check()) {
-            Auth::user()->assignRole('Admin');
+            // Auth::user()->assignRole('Admin');
             return view('userpage');
         } else {
 

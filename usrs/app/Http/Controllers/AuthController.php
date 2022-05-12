@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Image;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -21,7 +22,8 @@ class AuthController extends Controller
             //  'email'=>'required|string|unique:users,email',
             'email' => 'required|string|unique:users,email|regex:/(.+)@(.+)\.(.+)/i',
             'password' => 'required|string|confirmed',
-            'username' => 'unique:users,username'
+            'username' => 'unique:users,username',
+            'role' => 'string'
         ]);
 
         // $validator = Validator::make(request()->all(), [
@@ -47,12 +49,26 @@ class AuthController extends Controller
             'username' => $user_name,
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password)
+            'password' => bcrypt($request->password),
+
         ]);
+        if ($request->role = '' || !isset($request->role)) {
+            $r = $user->assignRole('Normal User');
+        }
+        $r = $user->assignRole('Admin');
+
+
+
 
         $token = $user->createToken('myapptoken')->plainTextToken;
 
-        return responsedata(msg: 'Register Successfully !', data: ['user' => $user, "token" => $token]);
+        // if ($request->role = '') {
+        //     $roles = auth()->user()->assignRole('Normal User');
+        // } else {
+        //     auth()->user()->assignRole($request->role);
+        // }
+
+        return responsedata(msg: 'Register Successfully !', data: ['user' => $user->first(), "token" => $token, "roles" => $r->roles->first()]);
     }
 
 

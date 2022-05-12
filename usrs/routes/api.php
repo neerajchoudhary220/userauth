@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\employee\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +22,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/upload', [AuthController::class, 'upload']);
-
+Route::post('/addemployee', [EmployeeController::class, 'addemployee']);
+Route::post('/update_employee', [EmployeeController::class, 'update']);
 
 //prtected
 Route::group(['middleware' => ['auth:sanctum']], function () {
