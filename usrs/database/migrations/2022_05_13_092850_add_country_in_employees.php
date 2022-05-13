@@ -13,10 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('employees', function (Blueprint $table) {
             //
-            //$table->string("status");
-             $table->dropColumn(['file_path']);
         });
     }
 
@@ -27,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-
+        Schema::table('employees', function (Blueprint $table) {
+            //
         });
     }
 };
