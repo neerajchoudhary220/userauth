@@ -28,17 +28,26 @@ Route::post('/update_employee', [EmployeeController::class, 'update']);
 Route::post('/destroy_employee', [EmployeeController::class, 'deleteEmployee']);
 Route::get('/view', [EmployeeController::class, 'viewEmployeeList']);
 
-Route::resource('/emp', EmployeeCrud::class, [
-    'only' => ['show', 'update', 'index', 'store']
-]);
 
 
+// Route::resource('/emp', EmployeeCrud::class, [
+//     'only' => ['show', 'update', 'index', 'store', 'delete', 'destroy']
+// ]);
+
+// Route::resource('/emp', EmployeeCrud::class);
 
 Route::get('/emp/search', [EmployeeCrud::class, 'search']);
 
 // Route::resource('/emp/search', EmployeeCrud::class, 'search');
 
 
+Route::get('/emp', [EmployeeCrud::class, 'index']);
+Route::post('/emp/create', [EmployeeCrud::class, 'store']);
+Route::get('/emp/view/{id}', [EmployeeCrud::class, 'show']);
+Route::put('/emp/update/{id}', [EmployeeCrud::class, 'update']);
+Route::delete('/emp/delete/{id}', [EmployeeCrud::class, 'destroy']);
+Route::get('/emp/status/{status}', [EmployeeCrud::class, 'statusFilter']);
+Route::get('/emp/gender/{gender}', [EmployeeCrud::class, 'GenderFilter']);
 //prtected
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
