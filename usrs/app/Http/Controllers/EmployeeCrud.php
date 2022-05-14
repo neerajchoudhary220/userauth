@@ -14,31 +14,45 @@ class EmployeeCrud extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $paginate = Employee::paginate(5);
-        // dd($paginate);
-        $page = [
-            'current-page' => $paginate->currentPage(),
-            "per-page" => $paginate->perPage(),
-            "from" => $paginate->firstItem(),
-            "to" => $paginate->lastItem(),
-            "total" => $paginate->total(),
-            "last-page" => $paginate->lastPage()
-        ];
-
-        $links = [
-            'first' => $paginate->url(1),
-            'prev' => $paginate->previousPageUrl(),
-            'next' => $paginate->nextPageUrl(),
-            'last' => $paginate->url($paginate->lastPage()),
-        ];
-        return responsedata(msg: 'Employee ', data: [
-            'employee' => $paginate->items(),
-            'page' => $page,
-            'links' => $links,
-
+        $request->validate([
+            'gender' => 'string'
         ]);
+
+        if ($request->gender) {
+            $employee = Employee::where('gender', $request->gender)->paginate(5);
+        }
+        if ($request->status) {
+            $employee = Employee::where('status', $request->status)->paginate(5);
+        }
+        // if ($request->search) {
+        //     $data = [];
+        //     $columns = ['first_name', 'middle_name', 'last_name', 'mobile', 'gender', 'status', 'Employee_id', 'date_of_birth'];
+
+        //     foreach ($columns as $column) {
+        //         $model = Employee::where($column, '=', $request->search)->get();
+        //         if ($model->first() != null) {
+        //             $data[] = ['employee' => $model];
+        //         }
+        //     }
+
+        //     if (count($data) != 0) {
+        //         return responsedata(data: $data);
+        //     } else {
+        //         return responsedata(msg: "Data is not found pls try again!");
+        //     }
+        // } else {
+        //     $employee = Employee::paginate(5);
+        // }
+
+
+        return Employee::pagination($employee);
+
+
+
+        // dd($paginate);
+
     }
 
     /**
@@ -102,17 +116,15 @@ class EmployeeCrud extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Employee $employee)
     {
 
-        $employee = Employee::find($id);
-        if ($employee) {
-            return responsedata(data: [
-                'employee' => $employee
-            ]);
-        } else {
-            return responsedata(msg: 'This employee is not exist !', status: 402);
-        }
+        // $employee = Employee::find($id);
+
+        return responsedata(data: [
+            'employee' => $employee
+        ]);
+
 
         // return new EmployeeResource($employee);
     }
@@ -191,10 +203,7 @@ class EmployeeCrud extends Controller
         }
     }
 
-    public function search(Request $request, $id)
-    {
-        return "search";
-    }
+
 
     public function statusFilter(Request $request, $status)
     {
@@ -211,5 +220,27 @@ class EmployeeCrud extends Controller
     {
         $employee = Employee::where('gender', $gender)->paginate(5);
         return Employee::pagination($employee);
+    }
+
+
+    public function search($search)
+    {
+
+
+        $data = [];
+        $columns = ['first_name', 'middle_name', 'last_name', 'mobile', 'gender', 'status', 'Employee_id', 'date_of_birth'];
+
+        foreach ($columns as $column) {
+            $model = Employee::where($column, '=', $search)->get();
+            if ($model->first() != null) {
+                $data[] = ['employee' => $model];
+            }
+        }
+
+        if (count($data) != 0) {
+            return responsedata(data: $data);
+        } else {
+            return responsedata(msg: "Data is not found pls try again!");
+        }
     }
 }
