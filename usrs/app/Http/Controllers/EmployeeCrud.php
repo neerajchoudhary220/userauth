@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\EmployeeResource;
+use App\Http\Resources\Employee\EmployeeCollection;
+use App\Http\Resources\Employee\EmployeeResource;
 use Illuminate\Http\Request;
 use App\Models\Employee;
 use PhpParser\Node\Expr\Empty_;
+use Carbon\Carbon;
 
 class EmployeeCrud extends Controller
 {
@@ -16,43 +18,40 @@ class EmployeeCrud extends Controller
      */
     public function index(Request $request)
     {
+
+
         $request->validate([
-            'gender' => 'string'
+            'gender' => 'string',
+            'status' => 'string',
+            'start_date' => 'date_format:Y-m-d',
+            'end_date' => 'date_format:Y-m-d'
         ]);
 
+        $query = Employee::query();
+
         if ($request->gender) {
-            $employee = Employee::where('gender', $request->gender)->paginate(5);
+            $query->where('gender', $request->gender);
         }
+
         if ($request->status) {
-            $employee = Employee::where('status', $request->status)->paginate(5);
+            $query->where('status', $request->status);
         }
-        // if ($request->search) {
-        //     $data = [];
-        //     $columns = ['first_name', 'middle_name', 'last_name', 'mobile', 'gender', 'status', 'Employee_id', 'date_of_birth'];
 
-        //     foreach ($columns as $column) {
-        //         $model = Employee::where($column, '=', $request->search)->get();
-        //         if ($model->first() != null) {
-        //             $data[] = ['employee' => $model];
-        //         }
-        //     }
+        if ($request->start_date && $request->end_date) {
+            $startDate = Carbon::createFromFormat('Y-m-d', $request->start_date);
+            $endDate = Carbon::createFromFormat('Y-m-d', $request->end_date);
 
-        //     if (count($data) != 0) {
-        //         return responsedata(data: $data);
-        //     } else {
-        //         return responsedata(msg: "Data is not found pls try again!");
-        //     }
-        // } else {
-        //     $employee = Employee::paginate(5);
-        // }
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        }
 
 
-        return Employee::pagination($employee);
+        if ($request->search) {
 
+            $q = $request->search;
+            $query->where('first_name', 'like', '%' . $q . '%')->orWhere('last_name', 'like', '%' . $q . '%')->orWhere('mobile', 'like', '%' . $q . '%')->orWhere('Employee_id', 'like', '%' . $q . '%')->orWhere('email', 'like', '%' . $q . '%')->orWhere('gender', 'like', '%' . $q . '%')->orWhere('status', 'like', '%' . $q . '%')->orWhere('date_of_birth', 'like', '%' . $q . '%');
+        }
 
-
-        // dd($paginate);
-
+        return responsedata(data: ['employee' => (new EmployeeCollection($query->paginate(5)))->response()->getData()]);
     }
 
     /**

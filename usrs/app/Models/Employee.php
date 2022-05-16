@@ -15,7 +15,7 @@ class Employee extends Model
     //Generate employee id
     public static function employeeID()
     {
-        $employee_id = "PZ" . substr(date('Y'), (strlen(date('Y')) - 2));
+        $employee_id = "PZ" . date('y');
         $employee_id = str_pad($employee_id, 8, 0);
         if (Employee::exists()) {
 
