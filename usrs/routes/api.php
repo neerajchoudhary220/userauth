@@ -6,6 +6,7 @@ use App\Http\Controllers\employee\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeCrud;
+use App\Http\Controllers\Mycontroller\MyController;
 
 
 /*
@@ -19,6 +20,10 @@ use App\Http\Controllers\EmployeeCrud;
 |
 */
 
+
+
+Route::get('/company', [MyController::class, 'company_related']);
+// Route::get('/', [MyController::class, 'member_related']);
 //public
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -29,16 +34,6 @@ Route::post('/destroy_employee', [EmployeeController::class, 'deleteEmployee']);
 Route::get('/view', [EmployeeController::class, 'viewEmployeeList']);
 
 
-
-// Route::resource('/emp', EmployeeCrud::class, [
-//     'only' => ['show', 'update', 'index', 'store', 'delete', 'destroy']
-// ]);
-
-// Route::resource('/emp', EmployeeCrud::class);
-
-
-
-// Route::resource('/emp/search', EmployeeCrud::class, 'search');
 
 
 Route::get('/emp', [EmployeeCrud::class, 'index']);

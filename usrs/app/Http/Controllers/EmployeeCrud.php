@@ -29,6 +29,8 @@ class EmployeeCrud extends Controller
 
         $query = Employee::query();
 
+
+
         if ($request->gender) {
             $query->where('gender', $request->gender);
         }
@@ -44,11 +46,16 @@ class EmployeeCrud extends Controller
             $query->whereBetween('created_at', [$startDate, $endDate]);
         }
 
-
         if ($request->search) {
 
             $q = $request->search;
-            $query->where('first_name', 'like', '%' . $q . '%')->orWhere('last_name', 'like', '%' . $q . '%')->orWhere('mobile', 'like', '%' . $q . '%')->orWhere('Employee_id', 'like', '%' . $q . '%')->orWhere('email', 'like', '%' . $q . '%')->orWhere('gender', 'like', '%' . $q . '%')->orWhere('status', 'like', '%' . $q . '%')->orWhere('date_of_birth', 'like', '%' . $q . '%');
+            //     $query->andwhere([
+            //        where->('first_name', 'like', '%' . $q . '%')->orWhere('last_name', 'like', '%' . $q . '%')->orWhere('mobile', 'like', '%' . $q . '%')->orWhere('Employee_id', 'like', '%' . $q . '%')->orWhere('email', 'like', '%' . $q . '%')->orWhere('gender', 'like', '%' . $q . '%')->orWhere('status', 'like', '%' . $q . '%')->orWhere('date_of_birth', 'like', '%' . $q . '%')
+            //     ]);
+            // }
+            $query->Where([
+                ['first_name', 'like', '%' . $q . '%']
+            ]);
         }
 
         return responsedata(data: ['employee' => (new EmployeeCollection($query->paginate(5)))->response()->getData()]);
