@@ -16,6 +16,7 @@ class MyController extends Controller
     {
 
         $query = Member::query();
+
         if ($request->com) {
 
 

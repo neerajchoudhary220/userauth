@@ -52,6 +52,7 @@ class AuthController extends Controller
             'password' => bcrypt($request->password),
 
         ]);
+
         if ($request->role = '' || !isset($request->role)) {
             $r = $user->assignRole('Normal User');
         }
@@ -68,7 +69,7 @@ class AuthController extends Controller
         //     auth()->user()->assignRole($request->role);
         // }
 
-        return responsedata(msg: 'Register Successfully !', data: ['user' => $user->first(), "token" => $token, "roles" => $r->roles->first()]);
+        return responsedata(msg: 'Register Successfully !', data: ['user' => $user, "token" => $token, "roles" => $r->roles]);
     }
 
 

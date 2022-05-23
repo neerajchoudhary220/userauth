@@ -13,5 +13,6 @@ class Company extends Model
     function members()
     {
         return $this->hasManyThrough(Member::class, Company::class, 'id', 'company_id');
+        // return $this->hasManyThrough(MemberHistory::class, Member::class, 'company_id', 'member_id', 'id', 'id');
     }
 }

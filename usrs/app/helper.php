@@ -1,7 +1,7 @@
 <?php
 if (!function_exists('responsedata')) {
 
-    function responsedata($msg = '', $errors = null, $data = null, $status = 200)
+    function responsedata($msg = 'success', $errors = null, $data = null, $status = 200)
     {
 
 
